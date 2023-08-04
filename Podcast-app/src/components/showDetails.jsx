@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const ShowDetails = () => {
   const [show, setShow] = useState(null);
@@ -33,6 +34,7 @@ const ShowDetails = () => {
             Season {season.season}: {season.title}
             <br />
             Number of Episodes: {Object.keys(season.episodes).length}
+            <Link to={`/show/${id}/season/${season.season}`}><button>View Episodes</button></Link>
           </div>
         ))}
       </div>

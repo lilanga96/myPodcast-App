@@ -35,6 +35,13 @@ const PodcastList = () => {
     9: "Kids and Family",
   };
 
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
+
+
   return (
     <div className="podcast-list">
       <h2>Podcast Shows</h2>
@@ -42,11 +49,12 @@ const PodcastList = () => {
         {shows.map((show) => (
           <div key={show.id}>
             <div className="card">
-              <h3>{show.title}</h3>
               <Link to={`/show/${show.id}`}> <img src={show.image} alt={show.title}/></Link>
+              <h3>{show.title}</h3>
               <p>Number of Seasons: {show.seasons}</p>
-              <p>Last Updated: {show.updated}</p>
+              <p>Last Updated: {formatDate(show.updated)}</p>
               <p>Genres: {show.genres.map((genreId) => genreLookupTable[genreId]).join(', ')}</p>
+              
             </div>
           </div>
         ))}
