@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import H5AudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css'
+import supabase from '../supabase';
 
 const SeasonEpisodes = () => {
   const [season, setSeason] = useState(null);
@@ -39,6 +40,7 @@ const SeasonEpisodes = () => {
                 onPlay={(e) => console.log('Audio is playing')}
               />
             <p>{episode.description}</p>
+            <button onClick={() => markAsFavorite(episode.episode)}>Mark as Favorite</button>
           </div>
         ))}
       </div>
