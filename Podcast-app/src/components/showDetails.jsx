@@ -38,6 +38,9 @@ const ShowDetails = () => {
           </div>
         ))}
       </div>
+      <Link to='/'>
+        <button className='home-btn'> Home</button>
+      </Link>
     </div>
   );
 };

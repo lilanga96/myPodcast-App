@@ -7,14 +7,15 @@ const PodcastList = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOrder, setSortOrder] = useState('asc');
-
+  const [sortBy, setSortBy] = useState('title');
+  const [dateSortOrder, setDateSortOrder] = useState('asc');
 
   useEffect(() => {
     fetch('https://podcast-api.netlify.app/shows')
       .then((response) => response.json())
       .then((data) => {
-        setShows(data); 
-        setLoading(false); 
+        setShows(data);
+        setLoading(false);
       })
       .catch((error) => {
         console.error('Error fetching data:', error);
@@ -23,7 +24,7 @@ const PodcastList = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>; // Show loading state while data is being fetched
+    return <div>Loading...</div>;
   }
 
   const genreLookupTable = {
@@ -43,6 +44,16 @@ const PodcastList = () => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
+  const handleSortByChange = (event) => {
+    const selectedSortBy = event.target.value;
+    setSortBy(selectedSortBy);
+
+  
+    if (selectedSortBy !== 'updated') {
+      setDateSortOrder('asc');
+    }
+  };
+
   const filteredShows = shows.filter((show) =>
     show.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -51,32 +62,53 @@ const PodcastList = () => {
     setSortOrder((prevSortOrder) => (prevSortOrder === 'asc' ? 'desc' : 'asc'));
   };
 
+  const toggleDateSortOrder = () => {
+    setDateSortOrder((prevSortOrder) => (prevSortOrder === 'asc' ? 'desc' : 'asc'));
+  };
 
-  const sortedShows = filteredShows.sort((a, b) => {
-    if (sortOrder === 'asc') {
-      return a.title.localeCompare(b.title);
-    } else {
-      return b.title.localeCompare(a.title);
+  const sortedShows = filteredShows.slice().sort((a, b) => {
+    if (sortBy === 'title') {
+      return sortOrder === 'asc' ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title);
+    } else if (sortBy === 'updated') {
+      return dateSortOrder === 'asc'
+        ? new Date(a.updated).getTime() - new Date(b.updated).getTime()
+        : new Date(b.updated).getTime() - new Date(a.updated).getTime();
     }
+
+    return 0;
   });
 
-
-
   return (
-    <div className="podcast-list">
-      <h2>Podcast Shows</h2>
-      <div>
-        <button onClick={toggleSortOrder}>
-          Sort by Title {sortOrder === 'asc' ? 'A-Z' : 'Z-A'}
-        </button>
+    <div className="podcast-list-container">
+      <div className="podcast-list-header">
+        <h2 className="podcast-list-title">Podcast Shows</h2>
+        <div className="sorting-options">
+          <button onClick={toggleSortOrder}>
+            Sort by title {sortOrder === 'asc' ? 'A-Z' : 'Z-A'}
+          </button>
+          <label className="sort-by-label">
+            Sort by:{' '}
+            <select value={sortBy} onChange={handleSortByChange}>
+              <option value="title">Title</option>
+              <option value="updated">Date Updated</option>
+            </select>
+            </label>
+          {sortBy === 'updated' && (
+            <button className="sort-by-date-btn" onClick={toggleDateSortOrder}>
+              Sort by date {dateSortOrder === 'asc' ? 'Descending' : 'Ascending'}
+            </button>
+          )}
+        </div>
       </div>
-      {/* Add the search input field */}
+
       <input
+        className="search-input"
         type="text"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         placeholder="Search by title..."
       />
+
       <div className="card-container">
         {loading ? (
           <div>Loading...</div>
@@ -92,9 +124,7 @@ const PodcastList = () => {
                 </Link>
                 <p>Number of Seasons: {show.seasons}</p>
                 <p>Last Updated: {formatDate(show.updated)}</p>
-                <p>
-                  Genres: {show.genres.map((genreId) => genreLookupTable[genreId]).join(', ')}
-                </p>
+                <p>Genres: {show.genres.map((genreId) => genreLookupTable[genreId]).join(', ')}</p>
               </div>
             </div>
           ))
@@ -105,7 +135,3 @@ const PodcastList = () => {
 };
 
 export default PodcastList;
-
-
-
-
