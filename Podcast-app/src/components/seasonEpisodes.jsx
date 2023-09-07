@@ -1,4 +1,3 @@
-// SeasonEpisodes.js
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import H5AudioPlayer from 'react-h5-audio-player';
@@ -6,7 +5,6 @@ import 'react-h5-audio-player/lib/styles.css';
 
 const SeasonEpisodes = () => {
   const [season, setSeason] = useState(null);
-  const [favoriteEpisodes, setFavoriteEpisodes] = useState([]);
   const { id, seasonNumber } = useParams();
 
   useEffect(() => {
@@ -21,17 +19,7 @@ const SeasonEpisodes = () => {
       });
   }, [id, seasonNumber]);
 
-  const handleToggleFavorite = (episodeNumber) => {
-    // Check if the episode is already in favorites
-    if (favoriteEpisodes.includes(episodeNumber)) {
-      // If already in favorites, remove it from favorites
-      setFavoriteEpisodes(favoriteEpisodes.filter((episode) => episode !== episodeNumber));
-    } else {
-      // If not in favorites, add it to favorites
-      setFavoriteEpisodes([...favoriteEpisodes, episodeNumber]);
-    }
-  };
-
+  
   if (!season) {
     return <div>Loading...</div>;
   }
@@ -45,10 +33,6 @@ const SeasonEpisodes = () => {
             <h3>{episode.title}</h3>
             <p>Episode: {episode.episode}</p>
             <H5AudioPlayer autoPlay={false} src={episode.file} onPlay={(e) => console.log('Audio is playing')} />
-
-            <button onClick={() => handleToggleFavorite(episode.episode)}>
-              {favoriteEpisodes.includes(episode.episode) ? 'Remove from Favorites' : 'Mark as Favorite'}
-            </button>
           </div>
         ))}
       </div>
